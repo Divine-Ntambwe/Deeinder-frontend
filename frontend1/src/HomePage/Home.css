@@ -1,0 +1,30 @@
+#home{
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+
+#body {
+    background-color: black;
+    height: 150vh;
+    color: white;
+}
+
+#home-navbar {
+position: sticky;
+top:0;
+
+}
+
+nav {
+    padding: 50px 30px;
+}
+
+nav a {
+ text-decoration: none;
+ font-size: 28px;
+ color: white;
+}
+
+nav a i {
+    color: gray;
+}
