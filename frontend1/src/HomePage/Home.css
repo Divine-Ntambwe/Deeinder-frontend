@@ -1,6 +1,6 @@
 #home{
     display: grid;
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 20% 80%;
 }
 
 #body {
@@ -23,8 +23,22 @@ nav a {
  text-decoration: none;
  font-size: 28px;
  color: white;
+ display: block;
+ margin-bottom: 40px;
 }
 
-nav a i {
+.nav-icons {
     color: gray;
+    width: 50px;
+    font-size: 38px;
+}
+
+#msg-icon {
+  /* transform:  skew("10deg"); */
+  transform:  scale(2) rotate(-20deg);
+  width: 50px;
+}
+
+#msg-icon-link{
+    
 }

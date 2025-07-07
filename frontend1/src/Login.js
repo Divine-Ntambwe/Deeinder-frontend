@@ -3,47 +3,27 @@ import { Link,useHistory} from 'react-router-dom'
 import {useState} from 'react'
 import IconButton from '@mui/material/IconButton';
 import usePost from './usePost';
+import useFetch from './useFetch';
 
 
 function Login() {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("")
-  const [loading, setLoading] = React.useState(false);
-  // const [cred,setCred] = useState({});
-  // const [url,setUrl] = useState("");
-  const [result,setResult] = useState("")
   const navigate = useHistory();
+  const url= "http://localhost:5000/login";
+  const {post,data:result,loading} = useFetch(url);
+   
   
- 
-
   const handleLogin = async () => {
   const cred = {email,password};
-  const url= "http://localhost:5000/login";
-  setLoading(true);
-   fetch(url,{
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(cred)
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setResult(data);
-          setLoading(false);
-          if (data.message) {
-            localStorage.setItem("email",email);
-            console.log(localStorage.getItem("email"))
-            navigate.push('/Home');
-            
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-
   
+  post(cred,()=>{
+    localStorage.setItem("email",email);
+    console.log(localStorage.getItem("email"))
+    navigate.push('/Home');
+  });
+
+    
   }
 
   return (
@@ -62,7 +42,7 @@ function Login() {
 
              <label htmlFor="login-password">Password:</label>
              <input required id="login-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
-             <p id="display-error">{result.error}</p>
+            { result && <p id="display-error">{result.error}</p>}
 
          
              <IconButton style={{ width: '100%',

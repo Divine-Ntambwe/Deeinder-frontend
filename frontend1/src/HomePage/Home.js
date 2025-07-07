@@ -1,6 +1,7 @@
 import React from 'react'
 import './Home.css'
 import {Link} from 'react-router-dom'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 
 function Home() {
   return (
@@ -10,7 +11,12 @@ function Home() {
 
         <nav>
 
-          <Link><i className="fa-solid fa-house-chimney"></i> Home</Link>
+          <a href="#home"><i className="fa-solid fa-house-chimney nav-icons"></i> Home</a>
+          <a><i className="fa-solid fa-magnifying-glass nav-icons"></i> Search</a>
+          <Link><i className="fa-solid fa-users-rays nav-icons"></i> Connections</Link>
+          <Link id="msg-icon-link"><SendOutlinedIcon id="msg-icon" className="nav-icons"/> Messages</Link>
+          <Link><i class="fa-solid fa-user nav-icons"></i> Profile</Link>
+
         </nav>
       </div>
 

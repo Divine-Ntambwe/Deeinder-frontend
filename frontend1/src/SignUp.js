@@ -6,6 +6,7 @@ import { compose, display, flexDirection, fontSize, margin, textAlign } from '@m
 import { Link,useHistory } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import useFetch from './useFetch';
 
 
 function SignUp() {
@@ -29,40 +30,51 @@ function SignUp() {
   const [confirmPassword,setConfirmPassword] = useState("");
   const [gender,setGender] = useState("");
   const [dob,setDob] = useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [result,setResult] = useState("");
-  const [error,setError] = useState("");
+
+  const url = "http://localhost:5000/signUp";
+
+  // const [loading, setLoading] = React.useState(false);
+  // const [result,setResult] = useState("");
+  // const [error,setError] = useState("");
   const navigate = useHistory();
  
   let today = new Date() ;
   let todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2,"0")}-${(today.getDate()).toString().padStart(2,"0")}`
+  
+  const {post,data:result,loading} = useFetch(url)
+
 
   const handleSignUp = (e) => {
-    e.preventDefault();
-    const details = {fullName,username,email,password,confirmPassword,gender,dob};
-    const url = "http://localhost:5000/signUp"
-   setLoading(true);
-   fetch(url,{
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(details)
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setResult(data);
-          setLoading(false);
-          if (data.message) {
-            localStorage.setItem("username",username);
-            navigate.push('/Home');
-            
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+  e.preventDefault();
+  const details = {fullName,username,email,password,confirmPassword,gender,dob};
+  post(details,()=>{
+     localStorage.setItem("username",username);
+     navigate.push('/Home');
+  }) 
 
-        });
+    
+  //  setLoading(true);
+  //  fetch(url,{
+  //       method: "POST",
+  //       headers: {"Content-Type": "application/json"},
+  //       body: JSON.stringify(details)
+  //     })
+  //       .then((res) => {
+  //         return res.json();
+  //       })
+  //       .then((data) => {
+  //         setResult(data);
+  //         setLoading(false);
+  //         if (data.message) {
+  //           localStorage.setItem("username",username);
+  //           navigate.push('/Home');
+            
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+
+  //       });
   }
 
   return (
@@ -73,7 +85,7 @@ function SignUp() {
      
    <form onSubmit={handleSignUp}>
       <h2 id="signup-heading">Sign Up</h2>
-      <p id="display-error">{result.error}</p>
+      {result && <p id="display-error">{result.error}</p>}
         
       <div id="signup-form">
         <div id="left">
