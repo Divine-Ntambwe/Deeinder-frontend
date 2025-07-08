@@ -7,6 +7,7 @@ import useFetch from './useFetch';
 import Login from './Login';
 import SignUp from './SignUp';
 import Home from './HomePage/Home'
+import MemberProfile from './MemberProfile/MemberProfile';
 
 
 function App() {
@@ -36,6 +37,10 @@ function App() {
 
           <Route exact path="/Home">
           <Home/>
+          </Route>
+
+          <Route exact path="/MemberProfile/:username">
+           <MemberProfile/>
           </Route>
 
           

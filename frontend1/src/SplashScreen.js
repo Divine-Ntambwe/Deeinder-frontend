@@ -9,8 +9,7 @@ function SplashScreen() {
 
 
   if (localStorage.getItem("email") || localStorage.getItem("username")) {
-      // navigate.push('/Home')
-
+    navigate.push('/Home');
   }
   return (
     <div id="splash-screen"><img id="splashBG"src={bgImg}></img></div>
