@@ -1,28 +1,28 @@
 import Navbar from './Navbar/Navbar'
 import './App.css';
 import SplashScreen from './SplashScreen';
-import { useState,useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch as Switch, useHistory} from 'react-router-dom';
 import useFetch from './useFetch';
 import Login from './Login';
 import SignUp from './SignUp';
 import Home from './HomePage/Home'
 import MemberProfile from './MemberProfile/MemberProfile';
-
+import CommonNavbar from './CommonNavbar/CommonNavbar';
+export const UserContext = React.createContext();
 
 function App() {
-  
+
+  const [user,setUser] = useState("no user");
 
   return (
     <Router>
        <div className="App">
-      
-      
-      
-     
        <div className='content'>
          <Switch>
-          <Route exact path="/">
+          <UserContext.Provider value={{user,setUser}}>
+
+            <Route exact path="/">
              <Navbar/>
              <SplashScreen/>
           </Route>
@@ -38,13 +38,14 @@ function App() {
           <Route exact path="/Home">
           <Home/>
           </Route>
-
+          
           <Route exact path="/MemberProfile/:username">
+           <CommonNavbar/>
            <MemberProfile/>
+          
           </Route>
 
-          
-         
+          </UserContext.Provider>
          </Switch>
         
          

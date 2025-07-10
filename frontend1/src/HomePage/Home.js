@@ -2,11 +2,14 @@ import React, { useEffect } from 'react'
 import './Home.css'
 import {Link} from 'react-router-dom'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import useFetch from '../useFetch';
+import { UserContext } from '../App';
 
 function Home() {
-  const {data,get} = useFetch("http://localhost:5000/membersProfiles");
+  const {result:data,get} = useFetch("http://localhost:5000/membersProfiles");
+  const {user, setUser} = useContext(UserContext);
+  setUser(localStorage.getItem("username"))
   
   useEffect(()=>{get()},[]);
 
@@ -17,10 +20,7 @@ function Home() {
    if(data[i].gender === "M") {temp.push(data[i])}
   }
 
-
-
   useEffect(()=>{
-
   setMembers([...temp])
   },[data])
 

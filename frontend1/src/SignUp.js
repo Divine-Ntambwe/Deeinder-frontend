@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import { compose, display, flexDirection, fontSize, margin, textAlign } from '@mui/system';
@@ -7,7 +7,7 @@ import { Link,useHistory } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useFetch from './useFetch';
-
+import { UserContext } from './App';
 
 function SignUp() {
 
@@ -33,23 +33,21 @@ function SignUp() {
 
   const url = "http://localhost:5000/signUp";
 
-  // const [loading, setLoading] = React.useState(false);
-  // const [result,setResult] = useState("");
-  // const [error,setError] = useState("");
   const navigate = useHistory();
  
   let today = new Date() ;
   let todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2,"0")}-${(today.getDate()).toString().padStart(2,"0")}`
   
-  const {post,data:result,loading} = useFetch(url)
+  const {post,data:result,loading} = useFetch(url);
+  const {user, setUser} = useContext(UserContext);
 
 
   const handleSignUp = (e) => {
   e.preventDefault();
   const details = {fullName,username,email,password,confirmPassword,gender,dob};
   post(details,()=>{
-     localStorage.setItem("username",username);
      navigate.push('/Home');
+     return "creds"
   }) 
 
     

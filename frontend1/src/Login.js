@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Link,useHistory} from 'react-router-dom'
 import {useState} from 'react'
 import IconButton from '@mui/material/IconButton';
 import usePost from './usePost';
 import useFetch from './useFetch';
+import { UserContext } from './App';
 
 
 function Login() {
@@ -11,19 +12,19 @@ function Login() {
   const [password,setPassword] = useState("")
   const navigate = useHistory();
   const url= "http://localhost:5000/login";
-  const {post,data:result,loading} = useFetch(url);
-   
+  const {post,result,loading} = useFetch(url);
+  const {user, setUser} = useContext(UserContext);
+
+ 
   
   const handleLogin = async () => {
   const cred = {email,password};
   
-  post(cred,()=>{
-    localStorage.setItem("email",email);
-    console.log(localStorage.getItem("email"))
+  await post(cred,()=>{
     navigate.push('/Home');
-  });
+    return "creds"
+  })
 
-    
   }
 
   return (

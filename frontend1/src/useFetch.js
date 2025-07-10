@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
+import { UserContext } from './App';
+
 
 const useFetch = (url,body,toDo) => {
-  const [data, setData] = useState(null);
+  const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const {user, setUser} = useContext(UserContext);
 
   async function get() {
      try { 
      const res = await fetch(url);
      const data = await res.json();
-     setData(data)
+     setResult(data);
      } catch(e) {
       console.error(e)
      }
@@ -27,19 +30,22 @@ const useFetch = (url,body,toDo) => {
        
      const data = await res.json();
      setLoading(false);
-     setData(data);
-     console.log(data);
+     setResult(data);
 
       if (data.message) {
-        toDo()
-     }
+        let perform = toDo();
+        if (perform === "creds"){
+        localStorage.setItem("username",data.username)
+        setUser(data.username)
+      }
+      }
      } catch(e) {
       console.error(e)
      }
   }
 
  
-  return { get, post , data, error,loading };
+  return { get, post , result, error,loading };
 };
 
 export default useFetch;
