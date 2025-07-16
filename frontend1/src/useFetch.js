@@ -19,13 +19,13 @@ const useFetch = (url,body,toDo) => {
   
   }
 
-  async function post(body,toDo) {
+  async function postMedia(body,toDo) {
      try { 
       setLoading(true);
      const res = await fetch(url,{
        method: "POST",
-       headers: {"Content-Type": "application/json"},
-       body: JSON.stringify(body)
+      //  headers: {"Content-Type": "application/json"},
+       body: body
      });
        
      const data = await res.json();
@@ -34,7 +34,32 @@ const useFetch = (url,body,toDo) => {
 
       if (data.message) {
         let perform = toDo();
-        if (perform === "creds"){
+        if (perform === "creds") {
+        localStorage.setItem("username",data.username)
+        setUser(data.username)
+      }
+      }
+     } catch(e) {
+      console.error(e)
+     }
+  }
+
+  async function post(body,toDo) {
+     try { 
+      setLoading(true);
+     const res = await fetch(url,{
+       method: "POST",
+       headers: {"Content-Type": "application/json"},
+       body: body
+     });
+       
+     const data = await res.json();
+     setLoading(false);
+     setResult(data);
+
+      if (data.message) {
+        let perform = toDo();
+        if (perform === "creds") {
         localStorage.setItem("username",data.username)
         setUser(data.username)
       }
@@ -45,7 +70,7 @@ const useFetch = (url,body,toDo) => {
   }
 
  
-  return { get, post , result, error,loading };
+  return { get, post , postMedia, result, error,loading };
 };
 
 export default useFetch;

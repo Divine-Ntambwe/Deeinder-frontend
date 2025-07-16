@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import './CommonNavbar.css'
 
 function CommonNavbar() {
   return (
     <div id="common-navbar">
         <nav>
           <h1 className="main-heading">Deeinder</h1>
+
           <div id="common-nav-icons">
           <Link to="/Home"><i className="fa-solid fa-house-chimney nav-icons"></i></Link>
 
@@ -16,6 +18,8 @@ function CommonNavbar() {
           <Link><i className="fa-solid fa-user nav-icons"></i></Link>
           </div>
         </nav>
+
+        
     </div>
   )
 }

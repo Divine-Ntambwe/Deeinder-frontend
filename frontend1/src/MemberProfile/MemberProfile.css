@@ -1,0 +1,130 @@
+#top-mp {
+    background-color: black;
+    height: auto;
+    display: grid;
+    grid-template-columns: 20% 25% 50%;
+    padding: 35px 0;
+    gap: 25px;
+}
+
+#bottom-mp {
+    background-color: #636363;
+    min-height: 500px;
+    
+}
+
+#body-mp {
+    display: flex;
+    flex-direction:column;
+    color: #a6a6a6;
+    font-family: "raleway";
+ 
+}
+
+#member-pfp-cont{
+    height: 100%;
+    width: 100%;
+    /* border: 10px solid red; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#member-pfp {
+    height: 30vh;
+    width: 30vh;
+    clip-path: circle();
+    /* background-color: aqua; */
+}
+
+.name-age{
+    font-size: 32px;
+}
+
+.short-desc {
+    font-size: 23px;
+    padding-top: 15px;
+}
+
+.purple-text{
+    color: #cb6ce6;
+    font-size: 21px;
+    padding-top: 10px;
+}
+
+.like-connection-grp{
+    display: flex;
+    margin-top: 15px;
+    justify-content: space-between;
+}
+
+.like-connection-grp i {
+    font-size: 52px;
+}
+
+.rel-intent {
+    font-size: 23px;
+}
+
+.interests {
+    display: grid;
+    grid-template-columns: 25% 25% 25%;
+    gap: 20px 80px;
+    margin-top: 12px;
+}
+
+.interests span {
+    height: 40px;
+    width: 100%;
+    background-color: #a6a6a6;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.intent-intests {
+    display: flex;
+    flex-direction: column;
+    gap: 20px
+}
+
+#bottom-mp{
+    padding: 10px 30px;
+}
+
+#bottom-mp p {
+    font-size: 32px;
+}
+
+.images-container {
+    display: grid;
+    grid-template-columns: 13% 13%;
+    grid-template-rows: 160px;
+    margin: 10px 0 30px 10px;
+    gap: 20px 50px
+
+}
+
+.images-container img {
+    border: 1px solid red;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.about-val {
+padding-left: 10px;
+color: black;
+font-weight: 500;
+}
+
+.aboutMe {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    gap: 15px 0
+}
+

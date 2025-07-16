@@ -42,6 +42,7 @@ function App() {
           <Route exact path="/MemberProfile/:username">
            <CommonNavbar/>
            <MemberProfile/>
+           
           
           </Route>
 

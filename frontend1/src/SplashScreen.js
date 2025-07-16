@@ -1,5 +1,4 @@
 import React from 'react'
-import bgImg from './splashBG.png'
 import {useHistory} from 'react-router-dom'
 import useFetch from './useFetch';
 import { useContext } from 'react';
@@ -10,12 +9,12 @@ function SplashScreen() {
   const {user, setUser} = useContext(UserContext);
   
   if (localStorage.getItem("username")) {
-    // navigate.push('/Home');
+    //  navigate.push('/Home');
     setUser(localStorage.getItem("username"))
     console.log(user)
   }
   return (
-    <div id="splash-screen"><img id="splashBG"src={bgImg}></img></div>
+    <div id="splash-screen"><img id="splashBG"src="splashBG.png"></img></div>
   )
 }
 

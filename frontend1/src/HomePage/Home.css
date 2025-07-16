@@ -9,6 +9,7 @@
     height: fit-content;
     color: white;
     padding: 10px 30px;
+    overflow-x: hidden;
 }
 
 #home-navbar {
@@ -16,15 +17,15 @@ position: sticky;
 top:0;
 
 }
-a{
+#home a{
 text-decoration: none;
 }
 
-nav {
+#home nav {
     padding: 50px 30px;
 }
 
-nav a {
+#home nav a {
  
  font-size: 28px;
  color: white;
@@ -58,7 +59,7 @@ nav a {
 #explore{
     margin-top: 15px;
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 25% 25% 25% 25%;
     gap: 15px;
 }
 #explore div{
@@ -70,10 +71,11 @@ nav a {
 }
 
 #explore img{
-    border: 2px solid red;
+    /* border: 2px solid red; */
     border-radius: 30px;
-    width: 100%;
-    height: 95%;
+    width: 95%;
+    height: 90%;
+    object-fit: fill;
 
 }
 
