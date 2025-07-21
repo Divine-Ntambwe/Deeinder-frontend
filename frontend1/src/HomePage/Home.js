@@ -86,7 +86,7 @@ function Home() {
           <Link id="msg-icon-link">
             <SendOutlinedIcon id="msg-icon" className="nav-icons" /> Messages
           </Link>
-          <Link>
+          <Link to={"/userProfile/"+ user}>
             <i className="fa-solid fa-user nav-icons"></i> Profile
           </Link>
         </nav>

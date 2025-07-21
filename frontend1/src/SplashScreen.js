@@ -9,7 +9,7 @@ function SplashScreen() {
   const {user, setUser} = useContext(UserContext);
   
   if (localStorage.getItem("username")) {
-    //  navigate.push('/Home');
+     navigate.push('/Home');
     setUser(localStorage.getItem("username"))
     console.log(user)
   }

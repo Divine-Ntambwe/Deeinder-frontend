@@ -9,11 +9,12 @@ import SignUp from './SignUp';
 import Home from './HomePage/Home'
 import MemberProfile from './MemberProfile/MemberProfile';
 import CommonNavbar from './CommonNavbar/CommonNavbar';
+import UserProfile from './MemberProfile/UserProfile';
 export const UserContext = React.createContext();
 
 function App() {
 
-  const [user,setUser] = useState("no user");
+  const [user,setUser] = useState(localStorage.getItem("username"));
 
   return (
     <Router>
@@ -44,6 +45,11 @@ function App() {
            <MemberProfile/>
            
           
+          </Route>
+
+          <Route exact path="/userProfile/:user">
+          <CommonNavbar/>
+          <UserProfile/>
           </Route>
 
           </UserContext.Provider>

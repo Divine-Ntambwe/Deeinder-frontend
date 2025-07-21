@@ -8,11 +8,14 @@ const useFetch = (url,body,toDo) => {
   const [loading, setLoading] = useState(false);
   const {user, setUser} = useContext(UserContext);
 
-  async function get() {
+  async function get(toDo = ()=>{}) {
      try { 
      const res = await fetch(url);
      const data = await res.json();
      setResult(data);
+     if (res.ok){
+      toDo()
+     }
      } catch(e) {
       console.error(e)
      }
@@ -24,7 +27,6 @@ const useFetch = (url,body,toDo) => {
       setLoading(true);
      const res = await fetch(url,{
        method: "POST",
-      //  headers: {"Content-Type": "application/json"},
        body: body
      });
        
@@ -44,13 +46,14 @@ const useFetch = (url,body,toDo) => {
      }
   }
 
-  async function post(body,toDo) {
+  async function post(body = {},toDo = ()=>{}) {
      try { 
+      console.log(body)
       setLoading(true);
      const res = await fetch(url,{
        method: "POST",
        headers: {"Content-Type": "application/json"},
-       body: body
+       body: JSON.stringify(body)
      });
        
      const data = await res.json();
@@ -63,6 +66,27 @@ const useFetch = (url,body,toDo) => {
         localStorage.setItem("username",data.username)
         setUser(data.username)
       }
+      }
+     } catch(e) {
+      console.error(e)
+     }
+  }
+
+  async function put(body = {},toDo = ()=>{}) {
+    try { 
+      setLoading(true);
+     const res = await fetch(url,{
+       method: "PUT",
+       headers: {"Content-Type": "application/json"},
+       body: JSON.stringify(body)
+     });
+       
+     const data = await res.json();
+     setLoading(false);
+     setResult(data);
+
+      if (data.message) {
+        let perform = toDo();
       }
      } catch(e) {
       console.error(e)
@@ -70,7 +94,7 @@ const useFetch = (url,body,toDo) => {
   }
 
  
-  return { get, post , postMedia, result, error,loading };
+  return { get,postMedia, post , put,result, error,loading };
 };
 
 export default useFetch;

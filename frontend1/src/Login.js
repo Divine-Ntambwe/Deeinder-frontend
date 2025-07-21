@@ -1,10 +1,9 @@
-import React, { useContext, useEffect } from 'react'
+import React from 'react'
 import { Link,useHistory} from 'react-router-dom'
 import {useState} from 'react'
 import IconButton from '@mui/material/IconButton';
 import usePost from './usePost';
 import useFetch from './useFetch';
-import { UserContext } from './App';
 
 
 function Login() {
@@ -13,18 +12,17 @@ function Login() {
   const navigate = useHistory();
   const url= "http://localhost:5000/login";
   const {post,result,loading} = useFetch(url);
-  const {user, setUser} = useContext(UserContext);
-
- 
+   
   
-  const handleLogin = async () => {
+  function handleLogin() {
   const cred = {email,password};
   
-  await post(cred,()=>{
+  post(cred,()=>{
     navigate.push('/Home');
     return "creds"
-  })
+  });
 
+    
   }
 
   return (
