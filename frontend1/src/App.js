@@ -47,11 +47,6 @@ function App() {
           
           </Route>
 
-          <Route exact path="/userProfile/:user">
-          <CommonNavbar/>
-          <UserProfile/>
-          </Route>
-
           </UserContext.Provider>
          </Switch>
         
