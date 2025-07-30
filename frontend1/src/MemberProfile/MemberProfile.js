@@ -7,6 +7,7 @@ import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import { grid, gridColumn, textAlign } from "@mui/system";
 import Button from "@mui/material/Button";
 import { UserContext } from "../App.js";
+import CommonNavbar from '../CommonNavbar/CommonNavbar.js'
 
 function MemberProfile() {
   const memberUsername = useParams().username;
@@ -95,8 +96,11 @@ function MemberProfile() {
   }
 
   return (
-    <div id="MemberProfile">
+    <div id="MemberProfile profile">
       <div id="body-mp">
+      <div className='profile-navbar'>
+          <CommonNavbar/>
+        </div>
         <div id="top-mp">
           <div id="member-pfp-cont">
             {member && (

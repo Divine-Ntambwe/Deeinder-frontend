@@ -41,10 +41,13 @@ function App() {
           </Route>
           
           <Route exact path="/MemberProfile/:username">
-           <CommonNavbar/>
            <MemberProfile/>
            
           
+          </Route>
+
+          <Route exact path="/userProfile/:user">
+          <UserProfile/>
           </Route>
 
           </UserContext.Provider>
