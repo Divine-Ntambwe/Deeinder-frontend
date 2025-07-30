@@ -8,7 +8,7 @@ import { UserContext } from "../App";
 
 function Home() {
   const { result: data, get } = useFetch(
-    "http://localhost:5000/membersProfiles"
+    "http://localhost:8000/membersProfiles"
   );
   const { user, setUser } = useContext(UserContext);
   setUser(localStorage.getItem("username"));
@@ -104,7 +104,7 @@ function Home() {
                 <div key={member.username} className="preview-profile">
                   <img
                     alt={`a picture of ${member.username}`}
-                    src={"http://localhost:5000/" + member.pfpPath}
+                    src={"http://localhost:8000/" + member.pfpPath}
                   />
                   <h3>
                     {member.username}, {member.age}
