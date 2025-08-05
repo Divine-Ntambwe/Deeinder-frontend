@@ -68,12 +68,19 @@ function UserProfile() {
     
 
     const noPhotoText = useRef();
-    
-    function handleAddInterest(){
 
 
+    const addInterestInput = useRef();
+    function handleAddInterest(e){
+      if (!newInterests.includes(addInterestInput.current.value)){
+      setInterests([...newInterests,addInterestInput.current.value])
+      addInterestInput.current.value = ""
+    } else {
+      alert("Interest Already Exists")
     }
-
+    }
+ 
+    
     
     function handleRemoveInterest(e){
       const interest = e.target.parentElement.parentElement ;
@@ -112,28 +119,31 @@ function UserProfile() {
             </div>
 
             <form>
-              <label>Username:</label>
-              <input value={newUsername} onChange={(e)=> setUsername(e.target.value)}/>
+              <label>Username:<span style={{color:"#cb6ce6"}}>*</span></label>
+              <input required value={newUsername} onChange={(e)=> setUsername(e.target.value)}/>
 
-              <label>Short Description:</label>
-              <input value={newShortDesc} onChange={(e)=> setShortDesc(e.target.value)}/>
+              <label>Short Description:<span style={{color:"#cb6ce6"}}>*</span></label>
+              <input required spellcheck="true" value={newShortDesc} onChange={(e)=> setShortDesc(e.target.value)}/>
 
-              <label>Relationship Intent:</label>
-              <select value={relationshipIntent}>
+              <label>Relationship Intent:<span style={{color:"#cb6ce6"}}>*</span></label>
+              <select required value={relationshipIntent}>
                 <option>Short-term Fun</option>
                 <option>Long-term Relationship</option>
                 <option>Short-term but open to long terms</option>
                 <option>Friends</option>
               </select>
+             {newAboutMe &&<> <label>Languages<span style={{color:"#cb6ce6"}}>*</span></label>
+              <input spellcheck="true" required pattern={/\w|,|\s/} value={typeof newAboutMe["Languages"] !== "string"? newAboutMe["Languages"].join(", "):newAboutMe["Languages"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Languages": e.target.value.replace(/(?<!,)\s/,", ")})}}/>
+          </>}
 
               <fieldset>
                 <legend>Interests</legend>
 
-                {member && interests.map((i,k)=>(
+                {newInterests && newInterests.map((i,k)=>(
                   <div className='interests-edit' id={k}> <Checkbox onChange={handleRemoveInterest} icon={<RemoveCircleOutlineIcon />} /> <label>{i}</label> </div>
                   
                   ))}
-                <input className='add-interest'/> 
+                <input className='add-interest' id="add-interest" ref={addInterestInput}/> 
               <input type='button' className='add-interest-btn' id='save-discard' onClick={handleAddInterest} value="add"/>
 
               </fieldset>
@@ -156,9 +166,7 @@ function UserProfile() {
               <label>Education</label>
               <input value={newAboutMe["Education"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Education": e.target.value})}}/>
 
-              <label>Languages</label>
-              <input value={newAboutMe["Languages"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Languages": e.target.value})}}/>
-
+             
               <label>Relationship Status</label>
               <input value={newAboutMe["Relationship Status"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Relationship Status": e.target.value})}}/>
 
