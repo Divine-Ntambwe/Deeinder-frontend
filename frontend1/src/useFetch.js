@@ -93,8 +93,28 @@ const useFetch = (url,body,toDo) => {
      }
   }
 
+  async function putMedia(body,toDo) {
+     try { 
+      setLoading(true);
+     const res = await fetch(url,{
+       method: "PUT",
+       body: body
+     });
+       
+     const data = await res.json();
+     setLoading(false);
+     setResult(data);
+
+      if (data.message) {
+        
+      }
+     } catch(e) {
+      console.error("err",e)
+     }
+  }
+
  
-  return { get,postMedia, post , put,result, error,loading };
+  return { get,postMedia, post , put, putMedia, result, error,loading };
 };
 
 export default useFetch;

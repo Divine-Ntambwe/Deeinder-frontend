@@ -1,10 +1,10 @@
-import React, { useEffect,useRef, useState,useContext } from 'react'
+import React, { useEffect,useRef, useState,useContext, Profiler } from 'react'
 import { useParams} from 'react-router-dom'
 import useFetch from '../useFetch'
 import './MemberProfile.css'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
-import { grid, gridColumn, textAlign } from '@mui/system';
+import { display, grid, gridColumn, textAlign } from '@mui/system';
 import Button from '@mui/material/Button';
 import { UserContext } from '../App.js';
 import CommonNavbar from '../CommonNavbar/CommonNavbar.js';
@@ -39,7 +39,8 @@ function UserProfile() {
     [newPfpPath,setPfpPath] = useState(),
     [newInterests,setInterests] = useState(),
     [newAboutMe,setAboutMe] = useState(),
-    [newPicsPaths,setPicsPath] = useState(picsPaths) ;
+    [newPicsPaths,setPicsPath] = useState(picsPaths),
+    [pfpFile,setFile] = useState()
 
 
   function hideText() {
@@ -49,7 +50,7 @@ function UserProfile() {
   useEffect(() => {
       getMembers(()=>{
       });
-    }, []);
+    });
 
     useEffect(() => {
         setUsername(username);
@@ -58,12 +59,9 @@ function UserProfile() {
         setPfpPath(pfpPath);
         setInterests(interests);
         setAboutMe(aboutMe);
-        setPicsPath(picsPaths)
+        setPicsPath(picsPaths);
+        console.log(member)
     }, [member]);
-
-    useEffect(()=>{ 
-
-    },[newInterests])
 
     
 
@@ -84,22 +82,57 @@ function UserProfile() {
     
     function handleRemoveInterest(e){
       const interest = e.target.parentElement.parentElement ;
-      interest.style.display = "none";
 
       setInterests(newInterests.filter((i)=>{return i !== interest.children[1].textContent}))
 
     }
-  return (
-    <div className='user-profile profile'>
 
-      <div className='profile-popup-cont'>
+    const pfpInput = useRef()
+    function handleChangePfp(){
+      pfpInput.current.click()
+    }
+
+    const editPopup = useRef();
+
+
+    const {putMedia:update, error, data} = useFetch(`${url}/UpdatemembersPersonalInfo/${user}`)
+    
+    function handleSave(e){
+      e.preventDefault();
+      const newProfile = {
+        username:newUsername,
+        shortDescription: newShortDesc,
+        relationshipIntent: newRelationshipIntent,
+        interests: newInterests,
+        pfpPath: newPfpPath,
+        aboutMe: newAboutMe
+      }
+
+      for (let i in newProfile){
+        if (newProfile[i] === member[i]){
+          delete newProfile[i]
+        }
+      }
+
+      console.log(newProfile)
+      const formData = new FormData();
+      formData.append("updates", JSON.stringify(newProfile));
+      formData.append("pfp",pfpFile);
+
+      update(formData)
+    }
+  return (
+    <div className='user-profile profile' >
+        <form onSubmit={handleSave}>
+      <div className='profile-popup-cont' ref={editPopup}>
 
         <div className='profile-popup'>
           <div id="edit-prof-header">
           <h2>Edit Profile</h2>
+          {error && <p id="display-error">{error}</p>}
           <div>
-          <input value="save" type='submit' id="save-discard"/>
-          <input value="discard" type='button' id="save-discard"/>
+          <input className="button" value="save" type='submit' id="save-discard"/>
+          <input className="button"onClick={()=>{editPopup.current.style.display = "none"}}value="discard" type='button' id="save-discard"/>
           </div>
         
           </div>
@@ -108,17 +141,31 @@ function UserProfile() {
           {member && <div>
             <div className='edit-pfp'>
               <div>
-              <img src={"http://localhost:8000/" + pfpPath}/>
+              <img src={newPfpPath === pfpPath? url+"/"+pfpPath:newPfpPath}/>
               <p>
                 <span>{fullName}, {age}</span>
                 <p></p>
               </p>
               </div>
               
-              <button>Change Profile Picture</button>
+              <button type="button" onClick={handleChangePfp}>Change Profile Picture</button>
+              <input style={{display:"none"}}
+              type="file"
+        onChange={(event) => {
+          const file = event.target.files[0]
+          setFile(file);
+          const imgUrl = URL.createObjectURL(file)
+          setPfpPath(imgUrl)
+
+         }}
+        // required
+        name='pfp'
+        id='pfp'
+        ref={pfpInput}
+              />
             </div>
 
-            <form>
+          
               <label>Username:<span style={{color:"#cb6ce6"}}>*</span></label>
               <input required value={newUsername} onChange={(e)=> setUsername(e.target.value)}/>
 
@@ -133,7 +180,7 @@ function UserProfile() {
                 <option>Friends</option>
               </select>
              {newAboutMe &&<> <label>Languages<span style={{color:"#cb6ce6"}}>*</span></label>
-              <input spellcheck="true" required pattern={/\w|,|\s/} value={typeof newAboutMe["Languages"] !== "string"? newAboutMe["Languages"].join(", "):newAboutMe["Languages"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Languages": e.target.value.replace(/(?<!,)\s/,", ")})}}/>
+              <input spellcheck="true" required value={typeof newAboutMe["Languages"] !== "string"? newAboutMe["Languages"].join(", "):newAboutMe["Languages"]} onChange={(e)=>{setAboutMe({...newAboutMe,"Languages": e.target.value.replace(/(?<!,)\s/,", ")})}}/>
           </>}
 
               <fieldset>
@@ -144,7 +191,7 @@ function UserProfile() {
                   
                   ))}
                 <input className='add-interest' id="add-interest" ref={addInterestInput}/> 
-              <input type='button' className='add-interest-btn' id='save-discard' onClick={handleAddInterest} value="add"/>
+              <input type='button' className='add-interest-btn button' id='save-discard' onClick={handleAddInterest} value="add"/>
 
               </fieldset>
 
@@ -180,17 +227,18 @@ function UserProfile() {
 
               
              
-            </form>
+            
           </div>}
         </div>
 
       </div>
+      </form>
 
         <div className='profile-navbar'>
           <CommonNavbar/>
         </div>
         <div id="body-mp">
-        <p className='edit-prof'><EditTwoToneIcon style={{fontSize:"3em"}}/> </p>
+        <p className='edit-prof button' onClick={()=>{editPopup.current.style.display = "flex"}}><EditTwoToneIcon style={{fontSize:"3em"}}/> </p>
           <div id="top-mp">
             
             <div id="member-pfp-cont">

@@ -168,7 +168,7 @@ font-weight: 500;
     justify-content: center;
     align-items: center;
     background-color: rgba(0,0,0,0.5);
-    /* display: none; */
+    display: none;
 }
 
 .profile-popup {
@@ -212,6 +212,7 @@ z-index: 2;
     height: 20vh;
     width: 8vw;
     clip-path: circle();
+    object-fit: cover;
 }
 
 .edit-pfp p {
@@ -270,4 +271,8 @@ z-index: 2;
     font-size: 1em;
    
 
+}
+
+.button:hover {
+    cursor: pointer;
 }
