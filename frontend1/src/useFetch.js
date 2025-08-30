@@ -114,7 +114,7 @@ const useFetch = (url,body,toDo) => {
   }
 
  
-  return { get,postMedia, post , put, putMedia, result, error,loading };
+  return { get,postMedia, post , put, putMedia, result,setResult, error,loading };
 };
 
 export default useFetch;

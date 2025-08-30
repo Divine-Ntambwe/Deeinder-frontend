@@ -7,14 +7,15 @@ import useFetch from "../useFetch";
 import { UserContext } from "../App";
 
 function Home() {
-  const { result: data, get } = useFetch(
+  const { result: data, get, setResult } = useFetch(
     "http://localhost:8000/membersProfiles"
   );
   const { user, setUser } = useContext(UserContext);
   setUser(localStorage.getItem("username"));
-
+ const {check,setCheck} = useContext(UserContext)
   useEffect(() => {
     get();
+    console.log("ehp")
   }, []);
 
   let [members, setMembers] = useState([]);
@@ -26,7 +27,9 @@ function Home() {
 
   useEffect(() => {
     setMembers([...temp]);
+    console.log("eh")
   }, [data]);
+  console.log(data)
 
   const [searchText, setSearchText] = useState("");
   let filterMembers = [...temp];
@@ -37,12 +40,12 @@ function Home() {
     filterMembers =
       searchText === ""
         ? filterMembers
-        : filterMembers.filter(
+        : data.filter(
             (member) =>
               member.username.toLowerCase().includes(value) ||
               member.fullName.toLowerCase().includes(value)
           );
-    setMembers(filterMembers);
+    setResult(filterMembers);
   };
 
   const searchTextElement = useRef();
@@ -57,11 +60,11 @@ function Home() {
     searchInput.current.style.display = "none";
     searchTextElement.current.style.display = "inline";
   }
-
+ 
   return (
     <div id="home">
       <div id="home-navbar" className="main-bg">
-        <h1 className="main-heading">Deeinder</h1>
+        <h1 onClick={()=>{setCheck(true);console.log(check)}} className="main-heading">Deeinder</h1>
 
         <nav>
           <a href="#home">
@@ -83,7 +86,7 @@ function Home() {
           <Link>
             <i className="fa-solid fa-users-rays nav-icons"></i> Connections
           </Link>
-          <Link id="msg-icon-link">
+          <Link  to="/Home"id="msg-icon-link">
             <SendOutlinedIcon id="msg-icon" className="nav-icons" /> Messages
           </Link>
           <Link to={"/userProfile/"+ user}>

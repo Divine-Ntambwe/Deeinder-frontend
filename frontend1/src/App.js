@@ -15,13 +15,14 @@ export const UserContext = React.createContext();
 function App() {
 
   const [user,setUser] = useState(localStorage.getItem("username"));
+  const [check,setCheck] = useState(true)
 
   return (
     <Router>
        <div className="App">
        <div className='content'>
          <Switch>
-          <UserContext.Provider value={{user,setUser}}>
+          <UserContext.Provider value={{user,setUser,check,setCheck}}>
 
             <Route exact path="/">
              <Navbar/>

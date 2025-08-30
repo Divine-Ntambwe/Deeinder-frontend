@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import './CommonNavbar.css'
+import { UserContext } from '../App';
 
 function CommonNavbar() {
+  const {check,setCheck} = useContext(UserContext)
   return (
     <div id="common-navbar">
         <nav>
@@ -14,7 +16,7 @@ function CommonNavbar() {
 
           <Link><i className="fa-solid fa-users-rays nav-icons"></i></Link>
 
-          <Link id="msg-icon-link"><SendOutlinedIcon id="msg-icon" className="nav-icons"/></Link>
+          <Link to="/Home"  id="msg-icon-link"><SendOutlinedIcon id="msg-icon" className="nav-icons"/></Link>
           <Link><i className="fa-solid fa-user nav-icons"></i></Link>
           </div>
         </nav>
