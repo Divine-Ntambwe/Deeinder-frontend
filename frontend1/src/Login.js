@@ -1,26 +1,30 @@
-import React from 'react'
-import { Link,useHistory} from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link,useNavigate} from 'react-router-dom'
 import {useState} from 'react'
 import IconButton from '@mui/material/IconButton';
 import usePost from './usePost';
 import useFetch from './useFetch';
+import { UserContext } from './App';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
 
 function Login() {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("")
-  const navigate = useHistory();
-  const url= "http://localhost:5000/login";
-  const {post,data:result,loading} = useFetch(url);
+  const nav = useNavigate();
+  const {url,setUser} = useContext(UserContext)
+  const {post,result,loading} = useFetch(`${url}/Login`);
    
   
-  const handleLogin = async () => {
+  function handleLogin() {
   const cred = {email,password};
   
-  post(cred,()=>{
-    localStorage.setItem("email",email);
-    console.log(localStorage.getItem("email"))
-    navigate.push('/Home');
+  post(cred,(d)=>{
+    localStorage.setItem("user",JSON.stringify(d));
+    
+    setUser(d)
+    nav('/Home');
+   
   });
 
     

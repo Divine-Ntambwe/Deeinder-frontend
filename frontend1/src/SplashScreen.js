@@ -1,18 +1,19 @@
 import React from 'react'
-import bgImg from './splashBG.png'
-import {useHistory} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import useFetch from './useFetch';
-import { useEffect } from 'react';
+import { useContext } from 'react';
+import { UserContext } from './App';
 
 function SplashScreen() {
-  const navigate = useHistory();
-
-
-  if (localStorage.getItem("email") || localStorage.getItem("username")) {
-    navigate.push('/Home');
+  const nav = useNavigate();
+  const {setUser} = useContext(UserContext);
+  
+  if (localStorage.getItem("user")) {
+    nav('/Home');
+    setUser(JSON.parse(localStorage.getItem("user")))
   }
   return (
-    <div id="splash-screen"><img id="splashBG"src={bgImg}></img></div>
+    <div id="splash-screen"><img id="splashBG"src="splashBG.png"></img></div>
   )
 }
 

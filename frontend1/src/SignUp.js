@@ -1,13 +1,13 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
-import { compose, display, flexDirection, fontSize, margin, textAlign } from '@mui/system';
-import { Link,useHistory } from 'react-router-dom';
+import { compose, display, flexDirection, fontSize, height, margin, maxHeight, textAlign } from '@mui/system';
+import { Link,useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useFetch from './useFetch';
-
+import { UserContext } from './App';
 
 function SignUp() {
 
@@ -26,55 +26,40 @@ function SignUp() {
   const [email,setEmail] = useState("");
   const [fullName,setFullName] = useState("");
   const [username,setUsername] = useState("");
-  const [password,setPassword] = useState("");
-  const [confirmPassword,setConfirmPassword] = useState("");
+  const [password,setPassword] = useState("12345678-L");
+  const [confirmPassword,setConfirmPassword] = useState("12345678-L");
   const [gender,setGender] = useState("");
   const [dob,setDob] = useState("");
+  const [pfp,setPfp] =useState('emptyPfp.png')
+  const [pfpFile,setFile] = useState('')
 
   const url = "http://localhost:5000/signUp";
 
-  // const [loading, setLoading] = React.useState(false);
-  // const [result,setResult] = useState("");
-  // const [error,setError] = useState("");
-  const navigate = useHistory();
+  const nav = useNavigate();
  
   let today = new Date() ;
   let todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2,"0")}-${(today.getDate()).toString().padStart(2,"0")}`
   
-  const {post,data:result,loading} = useFetch(url)
+  const {postMedia,result,loading} = useFetch(url);
+  const {user, setUser} = useContext(UserContext);
 
 
-  const handleSignUp = (e) => {
+  function handleSignUp(e) {
   e.preventDefault();
+
+  const formData = new FormData();
   const details = {fullName,username,email,password,confirmPassword,gender,dob};
-  post(details,()=>{
-     localStorage.setItem("username",username);
-     navigate.push('/Home');
+  formData.append(`pfp`,pfpFile);
+  formData.append("details",JSON.stringify(details))
+  console.log(pfpFile)
+
+
+
+  postMedia(formData,()=>{
+     nav('/Home');
+     return "creds"
   }) 
 
-    
-  //  setLoading(true);
-  //  fetch(url,{
-  //       method: "POST",
-  //       headers: {"Content-Type": "application/json"},
-  //       body: JSON.stringify(details)
-  //     })
-  //       .then((res) => {
-  //         return res.json();
-  //       })
-  //       .then((data) => {
-  //         setResult(data);
-  //         setLoading(false);
-  //         if (data.message) {
-  //           localStorage.setItem("username",username);
-  //           navigate.push('/Home');
-            
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-
-  //       });
   }
 
   return (
@@ -83,9 +68,9 @@ function SignUp() {
 
         <h1 className="main-heading">Deeinder</h1>
      
-   <form onSubmit={handleSignUp}>
+   <form method="POST" action={url} encType="multipart/form-data" onSubmit={handleSignUp}>
       <h2 id="signup-heading">Sign Up</h2>
-      {result && <p id="display-error">{result.error}</p>}
+      {result &&  <p id="display-error">{result.error}</p>}
         
       <div id="signup-form">
         <div id="left">
@@ -116,12 +101,21 @@ function SignUp() {
       tabIndex={-1}
       
     >
-     <AccountCircleIcon style={{fontSize:'180px', color:'gray'}}/>
+    
+     <img id="pfp-img" src={pfp} style={{objectFit:"fill", width:"250px",height:"180px", clipPath:"circle()", color:'gray'}}></img>
      Upload Profile Picture
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) => console.log(event.target.files[0])}
-        multiple
+        onChange={(event) => {
+          const file = event.target.files[0]
+          setFile(file);
+          const imgUrl = URL.createObjectURL(file)
+          setPfp(imgUrl)
+
+         }}
+        // required
+        name='pfp'
+        id='pfp'
         
       />
     </Button>
