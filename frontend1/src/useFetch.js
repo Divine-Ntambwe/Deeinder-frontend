@@ -9,12 +9,15 @@ const useFetch = (url,body,toDo) => {
   const {user, setUser} = useContext(UserContext);
 
   async function get(toDo = ()=>{}) {
+    setLoading(true)
      try { 
      const res = await fetch(url);
      const data = await res.json();
+     setLoading(false)
      setResult(data);
      if (res.ok){
-      toDo()
+      toDo(data)
+      console.log("chat?")
      }
      } catch(e) {
       console.error(e)
@@ -61,11 +64,7 @@ const useFetch = (url,body,toDo) => {
      setResult(data);
 
       if (data.message) {
-        let perform = toDo();
-        if (perform === "creds") {
-        localStorage.setItem("username",data.username)
-        setUser(data.username)
-      }
+        toDo(data);
       }
      } catch(e) {
       console.error(e)
@@ -94,6 +93,7 @@ const useFetch = (url,body,toDo) => {
   }
 
   async function putMedia(body,toDo) {
+  
      try { 
       setLoading(true);
      const res = await fetch(url,{
@@ -104,9 +104,9 @@ const useFetch = (url,body,toDo) => {
      const data = await res.json();
      setLoading(false);
      setResult(data);
-
-      if (data.message) {
-        
+      
+      if (res.ok) {
+        toDo(data)
       }
      } catch(e) {
       console.error("err",e)
