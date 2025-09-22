@@ -3,7 +3,7 @@ import { useState,useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import { compose, display, flexDirection, fontSize, height, margin, maxHeight, textAlign } from '@mui/system';
-import { Link,useHistory } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useFetch from './useFetch';
@@ -35,7 +35,7 @@ function SignUp() {
 
   const url = "http://localhost:5000/signUp";
 
-  const navigate = useHistory();
+  const nav = useNavigate();
  
   let today = new Date() ;
   let todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2,"0")}-${(today.getDate()).toString().padStart(2,"0")}`
@@ -56,7 +56,7 @@ function SignUp() {
 
 
   postMedia(formData,()=>{
-     navigate.push('/Home');
+     nav('/Home');
      return "creds"
   }) 
 

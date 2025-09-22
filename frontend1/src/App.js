@@ -1,67 +1,89 @@
-import Navbar from './Navbar/Navbar'
-import './App.css';
-import SplashScreen from './SplashScreen';
-import React, { useState,useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch as Switch, useHistory} from 'react-router-dom';
-import useFetch from './useFetch';
-import Login from './Login';
-import SignUp from './SignUp';
-import Home from './HomePage/Home'
-import MemberProfile from './MemberProfile/MemberProfile';
-import CommonNavbar from './CommonNavbar/CommonNavbar';
-import UserProfile from './MemberProfile/UserProfile';
+import Navbar from "./Navbar/Navbar";
+import "./App.css";
+import UserProfile from "./MemberProfile/UserProfile";
+import MembersContext from "./Context/MembersContext";
+import SplashScreen from "./SplashScreen";
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import useFetch from "./useFetch";
+import Login from "./Login";
+import SignUp from "./SignUp";
+import Home from "./HomePage/Home";
+import MemberProfile from "./MemberProfile/MemberProfile";
+import CommonNavbar from "./CommonNavbar/CommonNavbar";
+import ConnectionRequests from "./Connections/Connections";
+
 export const UserContext = React.createContext();
 
 function App() {
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || ""
+  );
 
-  const [user,setUser] = useState(localStorage.getItem("username"));
-  const [check,setCheck] = useState(true)
+  const url = "http://localhost:8000";
 
+  function ProtectedRoutes({ element }) {
+    if (!user) {
+      alert("Please login");
+      return <Navigate to="/Login" />;
+    } else {
+      return element;
+    }
+  }
   return (
     <Router>
-       <div className="App">
-       <div className='content'>
-         <Switch>
-          <UserContext.Provider value={{user,setUser,check,setCheck}}>
+      <div className="App">
+        <div className="content">
+          <UserContext.Provider value={{ user, setUser, url }}>
+            <MembersContext>
+              <Routes>
+                <Route
+                  exact
+                  path="/"
+                  element={
+                    <>
+                      <Navbar />
+                      <SplashScreen />
+                    </>
+                  }
+                />
 
-            <Route exact path="/">
-             <Navbar/>
-             <SplashScreen/>
-          </Route>
+                <Route exact path="/Login" element={<Login />} />
 
-          <Route exact path="/Login">
-          <Login/>
-          </Route>
+                <Route exact path="/SignUp" element={<SignUp />} />
 
-          <Route exact path="/SignUp">
-            <SignUp/>
-          </Route>
+                <Route
+                  exact
+                  path="/Home"
+                  element={<ProtectedRoutes element={<Home />} />}
+                />
+                <Route
+                  exact
+                  path="/MemberProfile/:username"
+                  element={<ProtectedRoutes element={<MemberProfile />} />}
+                />
+                <Route
+                  exact
+                  path="/userProfile/:user"
+                  element={<ProtectedRoutes element={<UserProfile />} />}
+                />
 
-          <Route exact path="/Home">
-          <Home/>
-          </Route>
-          
-          <Route exact path="/MemberProfile/:username">
-           <MemberProfile/>
-           
-          
-          </Route>
-
-          <Route exact path="/userProfile/:user">
-          <UserProfile/>
-          </Route>
-
+                <Route
+                  exact
+                  path="/connections"
+                  element={<ProtectedRoutes element={<ConnectionRequests />} />}
+                />
+              </Routes>
+            </MembersContext>
           </UserContext.Provider>
-         </Switch>
-        
-         
-       </div>
-      
-    </div>
-
-    
+        </div>
+      </div>
     </Router>
-   
   );
 }
 

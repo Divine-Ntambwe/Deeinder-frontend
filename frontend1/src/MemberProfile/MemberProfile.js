@@ -7,67 +7,76 @@ import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import { grid, gridColumn, textAlign } from "@mui/system";
 import Button from "@mui/material/Button";
 import { UserContext } from "../App.js";
-import CommonNavbar from '../CommonNavbar/CommonNavbar.js'
+import CommonNavbar from "../CommonNavbar/CommonNavbar.js";
+import { members } from "../Context/MembersContext.jsx";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function MemberProfile() {
   const memberUsername = useParams().username;
-  const { user, setUser } = useContext(UserContext);
-  const url = "http://localhost:5000";
-  const { get: getMembers, result: member } = useFetch(
+  const { user, url } = useContext(UserContext);
+  const [member, setMember] = useState();
+  const { get: getMember, result } = useFetch(
     `${url}/memberProfile/${memberUsername}`
   );
   const likeButton = useRef();
+  const [likes, setLikes] = useState();
   const { put: likeProfile } = useFetch(
-    `${url}/likeProfile/${user}/${memberUsername}`
+    `${url}/likeProfile/${user.username}/${memberUsername}`
   );
   const { put: dislikeProfile } = useFetch(
-    `${url}/dislikeProfile/${user}/${memberUsername}`
+    `${url}/dislikeProfile/${user.username}/${memberUsername}`
   );
   const { get: getConnections, result: allConnections } = useFetch(
     `${url}/connectionRequests/${memberUsername}`
   );
-  const {
-    fullName,
-    age,
-    shortDescription,
-    likes,
-    connections,
-    relationshipIntent,
-    pfpPath,
-    interests,
-    aboutMe,
-    picsPaths,
-  } = member ? member : "";
+
   const noPhotoText = useRef();
   const { post: postConnection } = useFetch(
-    `${url}/connectionRequest/${user}/${memberUsername}`
+    `${url}/connectionRequest/${user.username}/${memberUsername}`
   );
   const requestBtn = useRef();
   const { put: updateConnection } = useFetch(
-    `${url}/removeConnectionRequest/${memberUsername}/${user}`
+    `${url}/removeConnectionRequest/${memberUsername}/${user.username}`
   );
 
   function hideText() {
-    noPhotoText.current.style.display = "none";
+    // noPhotoText.current.style.display = "none";
   }
-  useEffect(() => {
-    getConnections();
-    if (allConnections){
-    let found = allConnections.find(
-      (connection) => connection.senderUsername === user
-    );
-    if (found) {
-      requestBtn.current.style.color = "#cb6ce6";
-    } else {
-      requestBtn.current.style.color = "gray";
-    }
-  }
-    getMembers();
 
-    if (member && likes.includes(user)) {
+  useEffect(() => {
+    getMember((d) => {
+      setMember(d);
+      setLikes(d.likes.length);
+    });
+    getConnections();
+  }, []);
+
+  useEffect(() => {
+    if (member && member.likes.includes(user.username)) {
       likeButton.current.style.color = "#cb6ce6";
-    } else {
+    } else if (member) {
       likeButton.current.style.color = "gray";
+    }
+    console.log(allConnections)
+    if (allConnections) {
+      let found = allConnections.find(
+        (connection) => connection.senderUsername === user.username
+      );
+      if (found && member) {
+        requestBtn.current.style.color = "#cb6ce6";
+      } else if (member) {
+        requestBtn.current.style.color = "gray";
+      }
+      console.log(allConnections);
     }
   }, [member]);
 
@@ -75,10 +84,12 @@ function MemberProfile() {
     if (likeButton.current.style.color === "gray") {
       likeProfile({}, () => {
         likeButton.current.style.color = "#cb6ce6";
+        setLikes(likes + 1);
       });
     } else {
       dislikeProfile({}, () => {
         likeButton.current.style.color = "gray";
+        setLikes(likes - 1);
       });
     }
   };
@@ -95,114 +106,167 @@ function MemberProfile() {
     }
   }
 
+  const [viewingPicture,setViewingPicture] = useState("")
+    const [open, setOpen] = React.useState(false);
+  
+    const handleClickOpen = (path) => {
+      setOpen(true);
+      setViewingPicture(path)
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+
   return (
     <div id="MemberProfile profile">
-      <div id="body-mp">
-      <div className='profile-navbar'>
-          <CommonNavbar/>
-        </div>
-        <div id="top-mp">
-          <div id="member-pfp-cont">
-            {member && (
-              <img id="member-pfp" src={"http://localhost:5000/" + pfpPath} />
-            )}
-          </div>
-
-          <div id="name-desc-likes-connec">
-            {member && (
-              <p className="name-age">
-                {fullName}, {age}
-              </p>
-            )}
-            {member && <p className="short-desc">{shortDescription}</p>}
-
-            <div className="like-connection-grp">
-              <div>
-                <p
-                  style={{ cursor: "pointer" }}
-                  className="purple-text"
-                  onClick={handleLikeProfile}
-                >
-                  Like Profile
-                </p>
-                {member && <span>{`${likes.length}`} Likes</span>}
-              </div>
-              <FavoriteIcon
-                className = "Like-Req-btn"
-                ref={likeButton}
-                onClick={handleLikeProfile}
-                style={{ fontSize: "72px", color: "gray", cursor: "pointer" }}
-              />
-            </div>
-
-            <div className="like-connection-grp">
-              <div>
-                <p
-                  style={{ cursor: "pointer" }}
-                  className="purple-text"
-                  onClick={handleSendConnectionRequest}
-                >
-                  Send Connection Request
-                </p>
-                <span>{connections} connections</span>
-              </div>
-              <span
-                className = "Like-Req-btn"
-                ref={requestBtn}
-                style={{ color: "gray", cursor: "pointer" }}
-                onClick={handleSendConnectionRequest}
+      <Dialog
+              open={open}
+              slots={{
+                transition: Transition,
+              }}
+              keepMounted
+              onClose={handleClose}
+              aria-describedby="alert-dialog-slide-description"
+              fullWidth={true}
+              maxWidth={"md"}
+              // sx={{width:"500px"}}
+            >
+              <DialogActions  sx={{backgroundColor:"black"}}>
+                {/* <Button sx={{color:"#cb6ce6"}} onClick={handleRemovePicture}>Remove Picture</Button> */}
+                <Button sx={{color:"#cb6ce6"}} onClick={handleClose}>Close</Button>
+              </DialogActions>
+              {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
+              
+              <DialogContent 
+              sx={{backgroundColor:"black"}}
               >
-                <i className="fa-solid fa-users-rays"></i>
-              </span>
-            </div>
-          </div>
+               <img style={{width:"850px",height:"550px",objectFit:"contain"}} src={viewingPicture}/>
+              </DialogContent>
+              
+            </Dialog>
+      <div id="body-mp">
+        <div className="profile-navbar">
+          <CommonNavbar />
+        </div>
 
-          <div className="intent-intests">
-            <div>
-              <p className="rel-intent">Relationship Intent</p>
-              <p className="purple-text">{relationshipIntent || "-"}</p>
-            </div>
+        {result && (
+          <>
+            <div id="top-mp">
+              <div id="member-pfp-cont">
+                {member && (
+                  <img id="member-pfp" onClick={()=>{handleClickOpen(`${url}/${member.pfpPath}`)}}  src={`${url}/${member.pfpPath}`} />
+                )}
+              </div>
 
-            <div>
-              <p className="short-desc">Interests</p>
-              <div className="interests">
-                {member && interests.map((i) => <span>{i}</span>)}
+              <div id="name-desc-likes-connec">
+                {member && (
+                  <p className="name-age">
+                    {member.fullName}, {member.age}
+                  </p>
+                )}
+                {member && (
+                  <p className="short-desc">{member.shortDescription}</p>
+                )}
+
+                <div className="like-connection-grp">
+                  <div>
+                    <p
+                      style={{ cursor: "pointer" }}
+                      className="purple-text"
+                      onClick={handleLikeProfile}
+                    >
+                      Like Profile
+                    </p>
+                    {member && <span>{`${likes}`} Likes</span>}
+                  </div>
+                  <FavoriteIcon
+                    className="Like-Req-btn"
+                    ref={likeButton}
+                    onClick={handleLikeProfile}
+                    style={{
+                      fontSize: "72px",
+                      color: "gray",
+                      cursor: "pointer",
+                    }}
+                  />
+                </div>
+
+                <div className="like-connection-grp">
+                  <div>
+                    <p
+                      style={{ cursor: "pointer" }}
+                      className="purple-text"
+                      onClick={handleSendConnectionRequest}
+                    >
+                      Send Connection Request
+                    </p>
+                    <span>{member.connections} connections</span>
+                  </div>
+                  <span
+                    className="Like-Req-btn"
+                    ref={requestBtn}
+                    style={{ color: "gray", cursor: "pointer" }}
+                    onClick={handleSendConnectionRequest}
+                  >
+                    <i className="fa-solid fa-users-rays"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div className="intent-intests">
+                <div>
+                  <p className="rel-intent">Relationship Intent</p>
+                  <p className="purple-text">
+                    {member.relationshipIntent || "-"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="short-desc">Interests</p>
+                  <div className="interests">
+                    {member && member.interests.map((i) => <span>{i}</span>)}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div id="bottom-mp">
-          <p>Photos</p>
+            <div id="bottom-mp">
+              <p>Photos</p>
 
-          <div class="images-container">
-            <p style={{ gridColumn: "1/span 3" }} ref={noPhotoText}>
-              {" "}
-              <CameraAltOutlinedIcon /> No Photos Yet
-            </p>
-            {member && picsPaths.length !== 0 && hideText()}
-            {member &&
-              picsPaths.length !== 0 &&
-              picsPaths.map((path) => (
-                <img src={"http://localhost:5000/" + path} />
-              ))}
-          </div>
+              <div class="images-container">
+                {!member.picsPaths.length && (
+                  <p style={{ gridColumn: "1/span 3" }} ref={noPhotoText}>
+                    {" "}
+                    <CameraAltOutlinedIcon /> No Photos Yet
+                  </p>
+                )}
+                {member && member.picsPaths.length !== 0 && hideText()}
+                {member &&
+                  member.picsPaths.length !== 0 &&
+                  member.picsPaths.map((path) => (
+                    <img src={`${url}/${path}`} onClick={()=>{handleClickOpen(`${url}/${path}`)}} />
 
-          <p>About</p>
-          <div className="aboutMe">
-            {member &&
-              Object.keys(aboutMe).map((k) => (
-                <span className="about-prop">
-                  {k}:{" "}
-                  <span className="about-val">
-                    {typeof aboutMe[k] == "string"
-                      ? aboutMe[k]
-                      : aboutMe[k].toString()}
-                  </span>
-                </span>
-              ))}
-          </div>
-        </div>
+                  ))}
+              </div>
+
+              <p>About</p>
+              <div className="aboutMe">
+                {member &&
+                  Object.keys(member.aboutMe).map((k) => (
+                    <span className="about-prop">
+                      {k}:{" "}
+                      <span className="about-val">
+                        {typeof member.aboutMe[k] == "string"
+                          ? member.aboutMe[k]
+                          : member.aboutMe[k].toString()}
+                      </span>
+                    </span>
+                  ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
