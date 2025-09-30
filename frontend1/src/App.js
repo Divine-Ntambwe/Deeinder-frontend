@@ -17,6 +17,8 @@ import Home from "./HomePage/Home";
 import MemberProfile from "./MemberProfile/MemberProfile";
 import CommonNavbar from "./CommonNavbar/CommonNavbar";
 import ConnectionRequests from "./Connections/Connections";
+import Messages from "./Messages/Messages";
+import MessagingContext from "./Context/MessagingContext";
 
 export const UserContext = React.createContext();
 
@@ -41,6 +43,8 @@ function App() {
         <div className="content">
           <UserContext.Provider value={{ user, setUser, url }}>
             <MembersContext>
+              <MessagingContext>
+
               <Routes>
                 <Route
                   exact
@@ -78,7 +82,14 @@ function App() {
                   path="/connections"
                   element={<ProtectedRoutes element={<ConnectionRequests />} />}
                 />
+
+                <Route
+                  exact
+                  path="/messages"
+                  element={<ProtectedRoutes element={<Messages />} />}
+                />
               </Routes>
+              </MessagingContext>
             </MembersContext>
           </UserContext.Provider>
         </div>

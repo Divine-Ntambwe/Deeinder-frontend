@@ -84,8 +84,29 @@ const useFetch = (url,body,toDo) => {
      setLoading(false);
      setResult(data);
 
-      if (data.message) {
-        let perform = toDo();
+      if (res.ok) {
+        toDo();
+      }
+     } catch(e) {
+      console.error(e)
+     }
+  }
+
+  async function deleteAPI(body = {},toDo = ()=>{}) {
+    try { 
+      setLoading(true);
+     const res = await fetch(url,{
+       method: "DELETE",
+       headers: {"Content-Type": "application/json"},
+       body: JSON.stringify(body)
+     });
+       
+     const data = await res.json();
+     setLoading(false);
+     setResult(data);
+
+      if (res.ok) {
+        toDo();
       }
      } catch(e) {
       console.error(e)
@@ -114,7 +135,7 @@ const useFetch = (url,body,toDo) => {
   }
 
  
-  return { get,postMedia, post , put, putMedia, result,setResult, error,loading };
+  return { get,postMedia, post ,deleteAPI, put, putMedia, result,setResult, error,loading };
 };
 
 export default useFetch;

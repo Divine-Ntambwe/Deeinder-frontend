@@ -2,7 +2,8 @@
     display: grid;
     grid-template-columns: 75% 25%;
     align-items: center;
-    background-color:#350b69;
+    background-color:#4b0082;
+    /* #350b69; */
 }
 
 #common-navbar h1 {

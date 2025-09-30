@@ -2,7 +2,7 @@
   background-color: #4B0082;
 }
 
-.disabled-btn {
+.disabledBtn {
   background-color: #808080;
   cursor: not-allowed;
 }
@@ -41,20 +41,20 @@
   border-radius: 6px;
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  width: 200px;
+  width: 300px;
 }
 
 .search::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.requests-list {
+.requestsList {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.request-item {
+.requestItem {
   display: flex;
   align-items: center;
   padding: 12px;
@@ -62,7 +62,7 @@
   border-radius: 8px;
 }
 
-.profile-img {
+.profileImg {
   width: 40px;
   height: 40px;
   border-radius: 50%;
