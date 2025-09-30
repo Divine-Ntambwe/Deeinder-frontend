@@ -63,7 +63,7 @@ const ConnectionRequests = () => {
 
   function handleAcceptConnection(senderUsername) {
     console.log(user.username)
-    put({ senderUsername }, () => {
+    put({ senderUsername }, () => { 
       setFetch(fetch + 1);
     });
   }
