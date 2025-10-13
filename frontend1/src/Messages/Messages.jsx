@@ -1,74 +1,57 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState,useRef } from "react";
 import styles from "./messages.module.css";
 import CommonNavbar from "../CommonNavbar/CommonNavbar";
 import useFetch from "../useFetch";
-import { UserContext } from "../App";
+import { UserContext,socket } from "../App";
 import { members } from "../Context/MembersContext";
 import { Messaging } from "../Context/MessagingContext";
 
 const Messages = () => {
-  const users = [
-    { name: "Britney Connor", image: "britney.jpg" },
-    { name: "Wilfred Mendes", image: "wilfred.jpg" },
-    { name: "Ozias Powers", image: "ozias.jpg" },
-    { name: "Rich Idris", image: "rich.jpg" },
-    { name: "Chris B. Jordon", image: "chris.jpg" },
-  ];
-  const messages = [
-    {
-      sender: "Britney Connor",
-      text: "Hey, My Name is Britney how are you 😊",
-    },
-    { sender: "User", text: "Hey Britney, I'm Carmel 😍" },
-    { sender: "Britney Connor", text: "I'm Thanks 💕" },
-  ];
-  const {messagedUsers,currentChat,setCurrentChat,handleDisplayChat} = useContext(Messaging)
+  const {messagedUsers,currentChat,setCurrentChat,handleDisplayChat,room,newChat,setNewChat} = useContext(Messaging)
 
   const { url, user } = useContext(UserContext);
-  // const { get: getMessages } = useFetch(`${url}/messages/${user.username}`);
-  // const [allMessages, setAllMessages] = useState();
-  // const [messagedUsers, setMessagedUsers] = useState();
   const { allMembers } = useContext(members);
-  // const [currentChat, setCurrentChat] = useState();
+  const [messageSent, setMessageSent] = useState();
+  const [messageRecieved,setMessageRecieved] = useState();
+  const underLastText = useRef()
+  useEffect(()=>{
+    socket.on("recieve_message",(data)=>{
 
-  // useEffect(() => {
-  //   getMessages((d) => {
-  //     setAllMessages(d);
-  //     let users = [];
-  //     d.forEach((m) => {
-  //       users.push(m.senderId, m.recieverId);
-  //     });
-  //     users = users.filter((name) => {
-  //       return name !== user.username;
-  //     });
-  //     setMessagedUsers([...new Set(users)]);
-  //   });
-  // }, [handleDisplayChat]);
+        setMessageRecieved(data)
+    })
 
-  // function handleDisplayChat(user) {
-  //   const messages = allMessages.filter((message) => {
-  //     return message.recieverId === user || message.senderId === user;
-  //   });
-  //   const member = allMembers.find((member) => {
-  //     return member.username === user;
-  //   });
-  //   setCurrentChat({
-  //     pfp: `${url}/${member.pfpPath}`,
-  //     name: member.fullName,
-  //     username: member.username,
-  //     messages,
-  //   });
-  // }
+    
+  },[socket])
+  useEffect(()=>{
+        underLastText.current?.scrollIntoView({ behavior: "smooth" });
+  },[])
+   underLastText.current?.scrollIntoView({ behavior: "smooth" });
+  
+  useEffect(()=>{
+  
+  if (currentChat && messageRecieved && room === messageRecieved.room){
+    setCurrentChat({
+   ...currentChat,
+   messages: [...currentChat.messages, messageRecieved],
+  });
+}
+
+  
+
+
+  },[messageRecieved])
 
   const {post:sendMessage} = useFetch(`${url}/sendAMessage`)
-  const [messageSent, setMessageSent] = useState();
-  function handleSendAMessage() {
+  async function handleSendAMessage() {
     const newMessage = {
       senderId: user.username,
       recieverId: currentChat.username,
       timeSent: new Date(),
       message: messageSent,
     };
+
+    await socket.emit("send_message",{...newMessage,room})
+
     setCurrentChat({
       ...currentChat,
       messages: [...currentChat.messages, newMessage],
@@ -136,6 +119,7 @@ const Messages = () => {
                     }`}
                   >
                     <div className={styles.messageText}>{msg.message}</div>
+                    <div ref={underLastText}/>
                   </div>
                 ))}
               </div>

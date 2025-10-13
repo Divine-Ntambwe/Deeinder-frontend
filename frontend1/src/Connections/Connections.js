@@ -55,8 +55,9 @@ const ConnectionRequests = () => {
     });
   }
 
-  function handleRemoveConnectionSent(senderUsername) {
-    removeRequest({ senderUsername, recieverUsername: user.username }, () => {
+  function handleRemoveConnectionSent(recieverUsername) {
+    console.log("IIIII")
+    removeRequest({ senderUsername:user.username, recieverUsername }, () => {
       setFetch(fetch + 1);
     });
   }

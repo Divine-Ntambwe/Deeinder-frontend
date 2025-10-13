@@ -19,6 +19,9 @@ import CommonNavbar from "./CommonNavbar/CommonNavbar";
 import ConnectionRequests from "./Connections/Connections";
 import Messages from "./Messages/Messages";
 import MessagingContext from "./Context/MessagingContext";
+import io from "socket.io-client"
+
+export const socket = io.connect("https://deeinder-backend.onrender.com/")
 
 export const UserContext = React.createContext();
 
@@ -27,7 +30,7 @@ function App() {
     JSON.parse(localStorage.getItem("user")) || ""
   );
 
-  const url = "http://localhost:8000";
+  const url = "https://deeinder-backend.onrender.com";
 
   function ProtectedRoutes({ element }) {
     if (!user) {

@@ -7,28 +7,37 @@ import useFetch from "../useFetch";
 import { UserContext } from "../App";
 import { members } from "../Context/MembersContext";
 // import Skeleton from "@mui/material/Skeleton";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { Mousewheel,EffectCoverflow,Autoplay } from 'swiper/modules';
-import { Scrollbar } from 'swiper/modules';
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Mousewheel, EffectCoverflow, Autoplay } from "swiper/modules";
+import { Scrollbar } from "swiper/modules";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CommonNavbar from "../CommonNavbar/CommonNavbar";
 
 function Home() {
-  const { user, setUser,url } = useContext(UserContext);
-  const { exploreMembers,loading,setExploreMembers,handleSearch } = useContext(members);
+  const { user, setUser, url } = useContext(UserContext);
+  const { exploreMembers, loading, setExploreMembers, handleSearch } =
+    useContext(members);
   const [filterMembers, setFilterMembers] = useState([]);
-  const [searching,setSearching] = useState(0);
-  const homeHeader = useRef()
-  
+  const [searching, setSearching] = useState(0);
+  const homeHeader = useRef();
+  const homeSwiper = useRef();
+
+  function handleSwipe(e) {
+    console.log("yoooooo");
+    if (!homeSwiper.current) return;
+    const swiper = homeSwiper.current.swiper;
+    if (e.key === "ArrowRight") swiper.slideNext();
+    if (e.key === "ArrowLeft") swiper.slidePrev();
+  }
 
   const [searchText, setSearchText] = useState("");
 
   const search = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
-    handleSearch(value,setExploreMembers)
+    handleSearch(value, setExploreMembers);
   };
 
   const searchTextElement = useRef();
@@ -37,16 +46,15 @@ function Home() {
     searchInput.current.style.display = "inline";
     searchInput.current.focus();
     searchTextElement.current.style.display = "none";
-    homeHeader.current.style.display = "none"
+    homeHeader.current.style.display = "none";
   }
 
   function handleSearchInputBlur() {
     searchInput.current.style.display = "none";
     searchTextElement.current.style.display = "inline";
     setSearchText("");
-    handleSearch("",setExploreMembers)
-    homeHeader.current.style.display = "block"
-
+    handleSearch("", setExploreMembers);
+    homeHeader.current.style.display = "block";
   }
 
   return (
@@ -91,53 +99,72 @@ function Home() {
         </nav>
       </div> */}
 
-      <div id="home-content">
-      <div className="home-header" ref={homeHeader}>
-        
-        <h2>People You May Know</h2>
-        <br/>
-         <Swiper 
-        effect={'coverflow'} 
-        spaceBetween={30}
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={'auto'}
-        mousewheel={true}
-        // loop={true}
-         coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
-         autoplay={{
-          delay: 5000,
-          disableOnInteraction: false,
-        }}
-        modules={[Mousewheel,EffectCoverflow,Autoplay]}
-        className="mySwiper">
-          {exploreMembers && exploreMembers.map((member)=>(
-            <SwiperSlide>
-              <div className="slides">
-                <img src={`${url}/${member.pfpPath}`}/>
-                <div className="swiper-details">
-                  <h3>{member.fullName}, {member.age}</h3>
-                  <h3>{member.shortDescription}</h3>
-                  <h3>{member.relationshipIntent} &#128158;</h3>
-                  <h3 style={{display:"flex",}}> {member.likes.length} likes</h3>
-                  <h3>{member.connections} Connections</h3>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        
-      
-      </Swiper>
-       </div> 
-      <br/>
+      <div id="home-content"
+      >
+        <div
+          className="home-header"
+          ref={homeHeader}
+          >
+          <h2>People You May Know</h2>
+          <br />
+          <div
+          tabIndex={0} // makes div focusable
+          onMouseEnter={(e) => {
+            e.target.focus();
+          }}
+          onKeyDown={(e)=>{handleSwipe(e)}}
+          style={{ outline: "none" }}
+          >
+
+          <Swiper
+            ref={homeSwiper}
+            effect={"coverflow"}
+            spaceBetween={30}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={"auto"}
+            // mousewheel={true}
+            // loop={true}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            modules={[Mousewheel, EffectCoverflow, Autoplay]}
+            className="mySwiper"
+          >
+            {exploreMembers &&
+              exploreMembers.map((member) => (
+                <SwiperSlide>
+                  <div className="slides">
+                    <img src={`${url}/${member.pfpPath}`} />
+                    <div className="swiper-details">
+                      <h3>
+                        {member.fullName}, {member.age}
+                      </h3>
+                      <h3>{member.shortDescription}</h3>
+                      <h3>{member.relationshipIntent} &#128158;</h3>
+                      <h3 style={{ display: "flex" }}>
+                        {" "}
+                        {member.likes.length} likes
+                      </h3>
+                      <h3>{member.connections} Connections</h3>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+          </Swiper>
+          </div>
+        </div>
+        <br />
         <h2>Explore Profiles</h2>
-         <br/>
+        <br />
 
         <div id="explore">
           {/* {allMembers && loading === true ? (
@@ -167,7 +194,8 @@ function Home() {
           ) :allMembers && allMembers.length === 0 ? (
             <h3>No results found</h3>
           ) : (allMembers && */}
-            {exploreMembers && exploreMembers.map((member) => (
+          {exploreMembers &&
+            exploreMembers.map((member) => (
               <Link to={`/MemberProfile/${member.username}`}>
                 <div key={member.username} className="preview-profile">
                   <img

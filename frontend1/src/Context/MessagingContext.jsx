@@ -1,6 +1,6 @@
 import React,{useEffect,useState,useContext} from 'react'
 import { createContext } from 'react'
-import { UserContext } from '../App';
+import { UserContext,socket } from '../App';
 import useFetch from '../useFetch';
 import { members } from './MembersContext';
 export const Messaging = createContext();
@@ -10,7 +10,8 @@ function MessagingContext({children}) {
   const [allMessages, setAllMessages] = useState();
   const [messagedUsers, setMessagedUsers] = useState();
   const { allMembers } = useContext(members);
-  const [currentChat, setCurrentChat] = useState();
+  const [currentChat, setCurrentChat] = useState("");
+  const [newChat,setNewChat] = useState("")
 
      useEffect(() => {
         getMessages((d) => {
@@ -23,27 +24,37 @@ function MessagingContext({children}) {
             return name !== user.username;
           });
           setMessagedUsers([...new Set(users)]);
+        
         });
-      }, [currentChat]);
+      }, [currentChat,newChat]);
+    
 
+    const [room,setRoom] = useState()  
 
-    function handleDisplayChat(user) {
+    function handleDisplayChat(reciever) {
     const messages = allMessages.filter((message) => {
-      return message.recieverId === user || message.senderId === user;
+      return message.recieverId === reciever || message.senderId === reciever;
     });
     const member = allMembers.find((member) => {
-      return member.username === user;
+      return member.username === reciever;
     });
+
+    const roomId = [reciever,user.username].sort().join("-");
+
+    setRoom(roomId);
+    socket.emit("join_room",roomId)
+    
     setCurrentChat({
       pfp: `${url}/${member.pfpPath}`,
       name: member.fullName,
       username: member.username,
       messages,
     });
+
   }
   return (
     <div>
-        <Messaging.Provider value={{handleDisplayChat,allMessages,messagedUsers,currentChat,setCurrentChat}}>
+        <Messaging.Provider value={{handleDisplayChat,allMessages,messagedUsers,currentChat,setCurrentChat,room,newChat,setNewChat}}>
 
         {children}
         </Messaging.Provider>
